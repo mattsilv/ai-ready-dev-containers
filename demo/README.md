@@ -38,8 +38,6 @@ demo/
 │       └── setup.sql           # Runs when the database is first created
 ├── backend/                    # FastAPI backend application
 │   ├── Dockerfile              # Multi-stage build for backend
-│   ├── alembic.ini             # Database migration configuration
-│   ├── migrations/             # Database migrations directory
 │   ├── requirements.txt        # Python dependencies
 │   └── src/                    # Application source code
 │       ├── main.py             # FastAPI application entry point
@@ -98,12 +96,8 @@ Once your Dev Container environment is running:
 ### Backend Development
 
 ```bash
-# Create and apply database migrations
-cd /app  # This is the backend container working directory
-alembic revision --autogenerate -m "Initial migration"
-alembic upgrade head
-
 # Run tests (if added)
+cd /app  # This is the backend container working directory
 pytest
 
 # The FastAPI app auto-reloads when code changes
@@ -139,13 +133,11 @@ This demo showcases several key features of Dev Containers:
 
 4. **Auto-Reload**: Both the FastAPI backend and React frontend automatically reload when code changes are made.
 
-5. **Database Migrations**: Alembic is set up for managing database schema changes.
+5. **API Documentation**: FastAPI's automatic OpenAPI documentation is available at `/docs`.
 
-6. **API Documentation**: FastAPI's automatic OpenAPI documentation is available at `/docs`.
+6. **CORS Configured**: The backend is configured to allow requests from the frontend.
 
-7. **CORS Configured**: The backend is configured to allow requests from the frontend.
-
-8. **Hello World Demo App**: A simple demo application is included that demonstrates the full stack, with a React frontend fetching data from the PostgreSQL database via the FastAPI backend.
+7. **Hello World Demo App**: A simple demo application is included that demonstrates the full stack, with a React frontend fetching data from the PostgreSQL database via the FastAPI backend.
 
 ## Hello World Demo App
 

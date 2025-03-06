@@ -44,25 +44,11 @@ if [ ! -f .docker/init-scripts/setup.sql ]; then
     echo -e "${GREEN}✅ Created setup.sql${NC}"
 fi
 
-# Check if ports are already in use
+# Check if ports are already in use by non-demo containers
 echo -e "\n${YELLOW}Checking for port conflicts...${NC}"
 PORT_8001_STATUS=$(lsof -i:8001 -sTCP:LISTEN -t >/dev/null 2>&1; echo $?)
 PORT_3001_STATUS=$(lsof -i:3001 -sTCP:LISTEN -t >/dev/null 2>&1; echo $?)
 PORT_5434_STATUS=$(lsof -i:5434 -sTCP:LISTEN -t >/dev/null 2>&1; echo $?)
-
-if [ "$PORT_8001_STATUS" -eq 0 ] || [ "$PORT_3001_STATUS" -eq 0 ] || [ "$PORT_5434_STATUS" -eq 0 ]; then
-    echo -e "${YELLOW}Warning: Some ports needed by the application are already in use:${NC}"
-    [ "$PORT_8001_STATUS" -eq 0 ] && echo "- Port 8001 (Backend API) is busy"
-    [ "$PORT_3001_STATUS" -eq 0 ] && echo "- Port 3001 (Frontend) is busy"
-    [ "$PORT_5434_STATUS" -eq 0 ] && echo "- Port 5434 (PostgreSQL) is busy"
-    echo ""
-    echo "Please free up these ports before continuing."
-    read -p "Continue anyway? (y/n): " continue_anyway
-    if [[ ! "$continue_anyway" =~ ^[Yy]$ ]]; then
-        echo "Exiting script."
-        exit 1
-    fi
-fi
 
 # Check for existing containers created by this script
 echo -e "\n${YELLOW}Checking for existing demo containers...${NC}"
@@ -71,72 +57,41 @@ EXISTING_CONTAINERS=$(docker ps -a --filter "label=com.demo.app=ai-ready-demo" -
 if [ "$EXISTING_CONTAINERS" -gt 0 ]; then
     echo -e "${YELLOW}Found $EXISTING_CONTAINERS existing demo container(s):${NC}"
     docker ps -a --filter "label=com.demo.app=ai-ready-demo" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-    echo ""
-    echo -e "Options:"
-    echo "1. Stop and remove existing containers, then create new ones"
-    echo "2. Reuse existing containers (restart if stopped)"
-    echo "3. Exit"
-    echo ""
-    read -p "Choose an option (1-3): " container_option
     
-    case $container_option in
-        1)
-            echo -e "\n${YELLOW}Stopping and removing existing containers...${NC}"
-            docker-compose -f .devcontainer/docker-compose.yml down -v
-            echo -e "${GREEN}✅ Removed existing containers and volumes${NC}"
-            ;;
-        2)
-            echo -e "\n${YELLOW}Reusing existing containers...${NC}"
-            # Check if containers are running
-            RUNNING_CONTAINERS=$(docker ps --filter "label=com.demo.app=ai-ready-demo" --format "{{.Names}}" | wc -l | xargs)
-            
-            if [ "$RUNNING_CONTAINERS" -eq 0 ]; then
-                echo -e "${YELLOW}Containers are stopped. Starting them...${NC}"
-                docker-compose -f .devcontainer/docker-compose.yml start
-            else
-                echo -e "${GREEN}✅ Containers are already running${NC}"
-            fi
-            
-            # Start the backend service manually, redirecting output to log file
-            echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
-            docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" > "$LOG_FILE" 2>&1 &
-            sleep 2
-            echo -e "${GREEN}✅ Backend service started${NC}"
-            
-            # Update frontend configuration to fix routing issues
-            echo -e "\n${YELLOW}Updating frontend configuration...${NC}"
-            docker exec -i devcontainer-frontend-1 bash -c "cd /app && sed -i 's/host: .*/host: \"0.0.0.0\",/g' vite.config.js"
-            docker restart devcontainer-frontend-1
-            sleep 3
-            echo -e "${GREEN}✅ Frontend configuration updated${NC}"
-            
-            echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
-            echo ""
-            echo -e "${YELLOW}You can access the application at:${NC}"
-            echo "→ Frontend: http://localhost:3001"
-            echo "→ API docs: http://localhost:8001/docs"
-            echo ""
-            echo -e "${YELLOW}Backend logs are being written to:${NC} $LOG_FILE"
-            echo -e "${YELLOW}Happy coding!${NC} 🎉"
-            exit 0
-            ;;
-        3)
-            echo -e "${YELLOW}Exiting script.${NC}"
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}Invalid option. Proceeding with option 1 (remove and recreate).${NC}"
-            echo -e "\n${YELLOW}Stopping and removing existing containers...${NC}"
-            docker-compose -f .devcontainer/docker-compose.yml down -v
-            echo -e "${GREEN}✅ Removed existing containers and volumes${NC}"
-            ;;
-    esac
+    # Check if our demo containers are using the ports
+    DEMO_USING_PORTS=true
+    
+    # If ports are in use but not by our containers, we have a conflict
+    if ([ "$PORT_8001_STATUS" -eq 0 ] || [ "$PORT_3001_STATUS" -eq 0 ] || [ "$PORT_5434_STATUS" -eq 0 ]) && [ "$DEMO_USING_PORTS" = false ]; then
+        echo -e "\n${YELLOW}Warning: Some ports needed by the application are in use by non-demo processes:${NC}"
+        [ "$PORT_8001_STATUS" -eq 0 ] && echo "- Port 8001 (Backend API) is busy"
+        [ "$PORT_3001_STATUS" -eq 0 ] && echo "- Port 3001 (Frontend) is busy"
+        [ "$PORT_5434_STATUS" -eq 0 ] && echo "- Port 5434 (PostgreSQL) is busy"
+        echo ""
+        echo -e "${YELLOW}Please free up these ports before continuing.${NC}"
+        exit 1
+    fi
+    
+    echo -e "\n${YELLOW}Automatically stopping and removing existing containers for a clean start...${NC}"
+    docker-compose -f .devcontainer/docker-compose.yml down -v
+    echo -e "${GREEN}✅ Removed existing containers and volumes${NC}"
 else
     echo -e "${GREEN}✅ No existing demo containers found${NC}"
+    
+    # Only check for port conflicts if no demo containers exist
+    if [ "$PORT_8001_STATUS" -eq 0 ] || [ "$PORT_3001_STATUS" -eq 0 ] || [ "$PORT_5434_STATUS" -eq 0 ]; then
+        echo -e "${YELLOW}Warning: Some ports needed by the application are already in use:${NC}"
+        [ "$PORT_8001_STATUS" -eq 0 ] && echo "- Port 8001 (Backend API) is busy"
+        [ "$PORT_3001_STATUS" -eq 0 ] && echo "- Port 3001 (Frontend) is busy"
+        [ "$PORT_5434_STATUS" -eq 0 ] && echo "- Port 5434 (PostgreSQL) is busy"
+        echo ""
+        echo -e "${YELLOW}Please free up these ports before continuing.${NC}"
+        exit 1
+    fi
 fi
 
 # Start containers directly
-echo -e "\n${YELLOW}Starting containers directly with Docker...${NC}"
+echo -e "\n${YELLOW}Starting containers with Docker...${NC}"
 docker-compose -f .devcontainer/docker-compose.yml up -d --build
 
 # Verify the containers are running

@@ -6,6 +6,7 @@
   "remoteUser": "vscode",
   "forwardPorts": [3001, 8001, 5434],
   "shutdownAction": "stopCompose",
+  "overrideCommand": true,
   "customizations": {
     "vscode": {
       "extensions": [
@@ -27,5 +28,6 @@
       }
     }
   },
-  "postCreateCommand": "echo 'Dev container built successfully!'"
+  "postCreateCommand": "echo 'Dev container built successfully!'",
+  "postAttachCommand": "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
 }

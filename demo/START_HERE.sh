@@ -24,7 +24,7 @@ fi
 
 # Display Docker version
 echo -e "\n${YELLOW}Docker version:${NC}"
-docker version
+docker version | head -n 6
 echo ""
 
 # Check if VS Code is installed
@@ -89,11 +89,6 @@ echo -e "\n${YELLOW}Cleaning up old Docker volumes...${NC}"
 docker volume prune -f
 echo -e "${GREEN}✅ Removed any unused volumes${NC}"
 
-# Check Docker Compose version
-echo -e "\n${YELLOW}Docker Compose version:${NC}"
-docker-compose version
-echo ""
-
 # Start containers directly with full output
 echo -e "\n${YELLOW}Starting the containers directly...${NC}"
 docker-compose -f .devcontainer/docker-compose.yml up -d --build
@@ -122,18 +117,30 @@ else
     docker ps
 fi
 
+# Start the backend service manually to ensure it's running
+echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
+docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" &
+sleep 2
+echo -e "${GREEN}✅ Backend service started${NC}"
+
 echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
 
 # Show instructions for both methods
 echo -e "\n${BLUE}There are two ways to proceed:${NC}"
 echo ""
-echo -e "1. ${GREEN}Access directly in your browser:${NC}"
+echo -e "1. ${GREEN}Access directly in your browser (RECOMMENDED):${NC}"
 echo "   → Frontend: http://localhost:3001"
 echo "   → API docs: http://localhost:8001/docs"
 echo ""
 echo -e "2. ${GREEN}Or open VS Code with dev container:${NC}"
 echo "   → Press Enter to open VS Code"
 echo "   → When prompted, click 'Reopen in Container'"
+echo "   → (If this fails, you can still use option 1 above)"
+echo ""
+echo -e "${YELLOW}If VS Code fails to open the container, try these solutions:${NC}"
+echo "1. Reload your VS Code window (Cmd+R or Ctrl+R)"
+echo "2. Run from VS Code terminal: code --force-disable-user-env-probe" 
+echo "3. Check Docker Desktop settings for resource allocation (RAM: 4GB+)"
 echo ""
 echo -e "${YELLOW}This dual approach ensures you can work even if the VS Code extension has issues.${NC}"
 

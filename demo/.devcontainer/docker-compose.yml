@@ -14,8 +14,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Add a proper command to start the uvicorn server
-    command: bash -c "cd /app && sleep 5 && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
+    # Use a simple sleep command - VS Code will override this
+    command: sleep infinity
     user: vscode
     # Add tty and stdin_open for better terminal experience
     tty: true
@@ -34,12 +34,11 @@ services:
       - "3001:3000"
     depends_on:
       - backend
+    command: /bin/sh -c "npm run dev"
     user: vscode
     # Add tty and stdin_open for better terminal experience
     tty: true
     stdin_open: true
-    # Add sleep command for VSCode to properly connect
-    command: /bin/sh -c "sleep 2 && npm run dev"
 
   db:
     image: postgres:16-alpine

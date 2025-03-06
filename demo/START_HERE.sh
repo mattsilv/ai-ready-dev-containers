@@ -60,10 +60,68 @@ if [ "$PORT_8001_STATUS" -eq 0 ] || [ "$PORT_3001_STATUS" -eq 0 ] || [ "$PORT_54
     fi
 fi
 
-# Stop any existing containers
-echo -e "\n${YELLOW}Stopping any existing containers...${NC}"
-docker-compose -f .devcontainer/docker-compose.yml down -v
-echo -e "${GREEN}✅ Removed any existing containers and volumes${NC}"
+# Check for existing containers created by this script
+echo -e "\n${YELLOW}Checking for existing demo containers...${NC}"
+EXISTING_CONTAINERS=$(docker ps -a --filter "label=com.demo.app=ai-ready-demo" --format "{{.Names}}" | wc -l | xargs)
+
+if [ "$EXISTING_CONTAINERS" -gt 0 ]; then
+    echo -e "${YELLOW}Found $EXISTING_CONTAINERS existing demo container(s):${NC}"
+    docker ps -a --filter "label=com.demo.app=ai-ready-demo" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+    echo ""
+    echo -e "Options:"
+    echo "1. Stop and remove existing containers, then create new ones"
+    echo "2. Reuse existing containers (restart if stopped)"
+    echo "3. Exit"
+    echo ""
+    read -p "Choose an option (1-3): " container_option
+    
+    case $container_option in
+        1)
+            echo -e "\n${YELLOW}Stopping and removing existing containers...${NC}"
+            docker-compose -f .devcontainer/docker-compose.yml down -v
+            echo -e "${GREEN}✅ Removed existing containers and volumes${NC}"
+            ;;
+        2)
+            echo -e "\n${YELLOW}Reusing existing containers...${NC}"
+            # Check if containers are running
+            RUNNING_CONTAINERS=$(docker ps --filter "label=com.demo.app=ai-ready-demo" --format "{{.Names}}" | wc -l | xargs)
+            
+            if [ "$RUNNING_CONTAINERS" -eq 0 ]; then
+                echo -e "${YELLOW}Containers are stopped. Starting them...${NC}"
+                docker-compose -f .devcontainer/docker-compose.yml start
+            else
+                echo -e "${GREEN}✅ Containers are already running${NC}"
+            fi
+            
+            # Start the backend service manually
+            echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
+            docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" &
+            sleep 2
+            echo -e "${GREEN}✅ Backend service started${NC}"
+            
+            echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
+            echo ""
+            echo -e "${YELLOW}You can access the application at:${NC}"
+            echo "→ Frontend: http://localhost:3001"
+            echo "→ API docs: http://localhost:8001/docs"
+            echo ""
+            echo -e "${YELLOW}Happy coding!${NC} 🎉"
+            exit 0
+            ;;
+        3)
+            echo -e "${YELLOW}Exiting script.${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Invalid option. Proceeding with option 1 (remove and recreate).${NC}"
+            echo -e "\n${YELLOW}Stopping and removing existing containers...${NC}"
+            docker-compose -f .devcontainer/docker-compose.yml down -v
+            echo -e "${GREEN}✅ Removed existing containers and volumes${NC}"
+            ;;
+    esac
+else
+    echo -e "${GREEN}✅ No existing demo containers found${NC}"
+fi
 
 # Start containers directly
 echo -e "\n${YELLOW}Starting containers directly with Docker...${NC}"
@@ -71,14 +129,14 @@ docker-compose -f .devcontainer/docker-compose.yml up -d --build
 
 # Verify the containers are running
 echo -e "\n${YELLOW}Verifying containers are running...${NC}"
-RUNNING_CONTAINERS=$(docker ps --filter "name=devcontainer" --format "{{.Names}}" | wc -l | xargs)
+RUNNING_CONTAINERS=$(docker ps --filter "label=com.demo.app=ai-ready-demo" --format "{{.Names}}" | wc -l | xargs)
 
 if [ "$RUNNING_CONTAINERS" -eq 0 ]; then
     echo -e "${RED}❌ No containers are running. There might be an issue with Docker Compose.${NC}"
     exit 1
 else
     echo -e "${GREEN}✅ Found $RUNNING_CONTAINERS container(s) running${NC}"
-    docker ps
+    docker ps --filter "label=com.demo.app=ai-ready-demo" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 fi
 
 # Start the backend service manually

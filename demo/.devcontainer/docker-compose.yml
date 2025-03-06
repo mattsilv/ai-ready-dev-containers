@@ -16,6 +16,10 @@ services:
     user: vscode
     tty: true
     stdin_open: true
+    labels:
+      - "com.demo.app=ai-ready-demo"
+      - "com.demo.component=backend"
+      - "com.demo.managed-by=start-script"
 
   frontend:
     build:
@@ -32,6 +36,10 @@ services:
     user: vscode
     tty: true
     stdin_open: true
+    labels:
+      - "com.demo.app=ai-ready-demo"
+      - "com.demo.component=frontend"
+      - "com.demo.managed-by=start-script"
 
   db:
     image: postgres:16-alpine
@@ -49,6 +57,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    labels:
+      - "com.demo.app=ai-ready-demo"
+      - "com.demo.component=database"
+      - "com.demo.managed-by=start-script"
 
 volumes:
   postgres-data:

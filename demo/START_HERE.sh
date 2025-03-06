@@ -142,10 +142,6 @@ else
     docker ps --filter "label=com.demo.app=ai-ready-demo" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 fi
 
-# Wait for frontend to be ready
-echo -e "\n${YELLOW}Waiting for frontend to be ready...${NC}"
-sleep 5
-
 # Start the backend service manually, redirecting output to log file
 echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
 docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" > "$LOG_FILE" 2>&1 &

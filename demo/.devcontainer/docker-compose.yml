@@ -24,20 +24,13 @@ services:
   frontend:
     build:
       context: ../frontend
-      target: development
-    volumes:
-      - ../frontend:/app
-      - frontend-node-modules:/app/node_modules
+      target: production
     ports:
-      - "3001:3000"
+      - "3001:80"
     depends_on:
       - backend
-    command: /bin/sh -c "cd /app && npm run dev"
     environment:
       - VITE_API_URL=http://localhost:8001
-    user: vscode
-    tty: true
-    stdin_open: true
     labels:
       - "com.demo.app=ai-ready-demo"
       - "com.demo.component=frontend"

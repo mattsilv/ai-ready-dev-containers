@@ -108,7 +108,26 @@ fi
 
 # Update frontend configuration to fix routing issues
 echo -e "\n${YELLOW}Updating frontend configuration...${NC}"
-docker exec -i devcontainer-frontend-1 bash -c "cd /app && sed -i 's/host: .*/host: \"0.0.0.0\",/g' vite.config.js"
+if ! docker exec -i devcontainer-frontend-1 sh -c "cd /app && sed -i 's/host: .*/host: \"0.0.0.0\",/g' vite.config.js"; then
+    echo -e "${YELLOW}Warning: Could not update frontend configuration directly.${NC}"
+    echo -e "${YELLOW}Creating a temporary file to update the configuration...${NC}"
+    
+    # Alternative approach: Create a temporary file and copy it into the container
+    echo "import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    host: \"0.0.0.0\",
+    port: 3000,
+  },
+});" > /tmp/vite.config.js
+    
+    docker cp /tmp/vite.config.js devcontainer-frontend-1:/app/vite.config.js
+    rm /tmp/vite.config.js
+fi
+
 docker restart devcontainer-frontend-1
 sleep 3
 echo -e "${GREEN}✅ Frontend configuration updated${NC}"

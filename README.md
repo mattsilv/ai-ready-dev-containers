@@ -10,7 +10,7 @@ This repository contains development containers optimized for AI development wor
 
 This repository provides templates and best practices for creating consistent development environments using Dev Containers. The configurations are designed to be:
 
-1. **AI-Agent Compatible**: Optimized for use with AI coding assistants like GitHub Copilot, Cursor, and others
+1. **AI-Assisted Development Ready**: Optimized for developers using AI coding assistants like GitHub Copilot, Cursor, and others
 2. **Reproducible**: Ensuring consistent development experiences across team members
 3. **Production-Ready**: Configurable to match production environments
 4. **Flexible**: Adaptable to various tech stacks and frameworks
@@ -21,21 +21,25 @@ The templates follow a consistent architecture pattern that can be customized fo
 
 ```mermaid
 graph TD
-    subgraph "Development Environment"
+    subgraph "Local Development Environment"
         DevUser((Developer)) --> DevFE[Frontend]
         DevFE <--> DevBE[Backend API]
         DevBE <--> DevDB[(Local Database)]
+        DevUser <--> AIAssistant((AI Coding Assistant))
     end
 
-    subgraph "AI Integration"
-        AIAssistant((AI Assistant)) --> DevEnv[Dev Container]
-        DevEnv --> Config[Configuration]
-        DevEnv --> Dir[Directory Structure]
-        DevEnv --> Deps[Dependencies]
+    subgraph "Dev Container Configuration"
+        DevContainer[Dev Container] --> Config[Configuration]
+        DevContainer --> Dir[Directory Structure]
+        DevContainer --> Deps[Dependencies]
+        DevContainer --> Tools[Development Tools]
     end
+
+    AIAssistant -.-> DevContainer
+    DevUser --> DevContainer
 
     subgraph "Production Deployment"
-        ProdEnv[Production Environment] -.-> DevEnv
+        ProdEnv[Production Environment] -.-> DevContainer
     end
 
     classDef users fill:#f9f9f9,stroke:#333,stroke-width:1px;
@@ -43,12 +47,14 @@ graph TD
     classDef database fill:#336791,stroke:#333,stroke-width:1px,color:white;
     classDef ai fill:#FF6B6B,stroke:#333,stroke-width:1px,color:white;
     classDef prod fill:#5D8C3E,stroke:#333,stroke-width:1px,color:white;
+    classDef container fill:#4A89DC,stroke:#333,stroke-width:1px,color:white;
 
-    class DevUser,AIAssistant users;
-    class DevFE,DevBE,Config,Dir,Deps components;
+    class DevUser users;
+    class DevFE,DevBE,Config,Dir,Deps,Tools components;
     class DevDB database;
     class AIAssistant ai;
     class ProdEnv prod;
+    class DevContainer container;
 ```
 
 ## Getting Started

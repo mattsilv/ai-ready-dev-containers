@@ -82,69 +82,77 @@ fi
 # Stop any existing containers
 echo -e "\n${YELLOW}Stopping any existing containers...${NC}"
 docker-compose -f .devcontainer/docker-compose.yml down -v
-echo -e "${GREEN}✅ Removed any existing containers${NC}"
+echo -e "${GREEN}✅ Removed any existing containers and volumes${NC}"
 
-# Clean old Docker volumes
-echo -e "\n${YELLOW}Cleaning up old Docker volumes...${NC}"
-docker volume prune -f
-echo -e "${GREEN}✅ Removed any unused volumes${NC}"
+# Present options to the user
+echo -e "\n${BLUE}Choose how you want to run the demo:${NC}"
+echo ""
+echo -e "1. ${GREEN}Direct Docker start${NC} (Recommended, more reliable)"
+echo "   → Starts containers directly using docker-compose"
+echo "   → Access the app in your browser immediately"
+echo ""
+echo -e "2. ${GREEN}VS Code Dev Container${NC} (Better for development)"
+echo "   → Opens VS Code and lets it handle container creation"
+echo "   → Provides full development environment in VS Code"
+echo ""
+read -p "Enter your choice (1 or 2): " user_choice
 
-# Start containers directly with full output
-echo -e "\n${YELLOW}Starting the containers directly...${NC}"
-docker-compose -f .devcontainer/docker-compose.yml up -d --build
-
-# Verify the containers are running
-echo -e "\n${YELLOW}Verifying containers are running...${NC}"
-RUNNING_CONTAINERS=$(docker ps --filter "name=devcontainer" --format "{{.Names}}" | wc -l | xargs)
-
-if [ "$RUNNING_CONTAINERS" -eq 0 ]; then
-    echo -e "${RED}❌ No containers are running. There might be an issue with Docker Compose.${NC}"
-    echo -e "Let's try again with more detailed output:"
-    echo ""
-    docker-compose -f .devcontainer/docker-compose.yml up -d --build --verbose
+case $user_choice in
+  1)
+    # OPTION 1: Direct Docker start
+    echo -e "\n${YELLOW}Starting containers directly with Docker...${NC}"
+    docker-compose -f .devcontainer/docker-compose.yml up -d --build
     
-    # Check again
+    # Verify the containers are running
+    echo -e "\n${YELLOW}Verifying containers are running...${NC}"
     RUNNING_CONTAINERS=$(docker ps --filter "name=devcontainer" --format "{{.Names}}" | wc -l | xargs)
+    
     if [ "$RUNNING_CONTAINERS" -eq 0 ]; then
-        echo -e "${RED}❌ Failed to start containers. Please check the error messages above.${NC}"
-        # Show the logs to help diagnose the issue
-        echo -e "\n${YELLOW}Showing Docker Compose logs to help diagnose the issue:${NC}"
-        docker-compose -f .devcontainer/docker-compose.yml logs
+        echo -e "${RED}❌ No containers are running. There might be an issue with Docker Compose.${NC}"
         exit 1
+    else
+        echo -e "${GREEN}✅ Found $RUNNING_CONTAINERS container(s) running${NC}"
+        docker ps
     fi
-else
-    echo -e "${GREEN}✅ Found $RUNNING_CONTAINERS container(s) running${NC}"
-    docker ps
-fi
-
-# Start the backend service manually to ensure it's running
-echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
-docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" &
-sleep 2
-echo -e "${GREEN}✅ Backend service started${NC}"
-
-echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
-
-# Show instructions for both methods
-echo -e "\n${BLUE}There are two ways to proceed:${NC}"
-echo ""
-echo -e "1. ${GREEN}Access directly in your browser (RECOMMENDED):${NC}"
-echo "   → Frontend: http://localhost:3001"
-echo "   → API docs: http://localhost:8001/docs"
-echo ""
-echo -e "2. ${GREEN}Or open VS Code with dev container:${NC}"
-echo "   → Press Enter to open VS Code"
-echo "   → When prompted, click 'Reopen in Container'"
-echo "   → (If this fails, you can still use option 1 above)"
-echo ""
-echo -e "${YELLOW}If VS Code fails to open the container, try these solutions:${NC}"
-echo "1. Reload your VS Code window (Cmd+R or Ctrl+R)"
-echo "2. Run from VS Code terminal: code --force-disable-user-env-probe" 
-echo "3. Check Docker Desktop settings for resource allocation (RAM: 4GB+)"
-echo ""
-echo -e "${YELLOW}This dual approach ensures you can work even if the VS Code extension has issues.${NC}"
-
-read -p "Press Enter to open VS Code (or Ctrl+C to skip)..."
-code .
+    
+    # Start the backend service manually
+    echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
+    docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" &
+    sleep 2
+    echo -e "${GREEN}✅ Backend service started${NC}"
+    
+    echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
+    echo ""
+    echo -e "${YELLOW}You can access the application at:${NC}"
+    echo "→ Frontend: http://localhost:3001"
+    echo "→ API docs: http://localhost:8001/docs"
+    echo ""
+    echo -e "${YELLOW}To open VS Code in this directory (without containers):${NC}"
+    echo "→ Run: code ."
+    ;;
+    
+  2)
+    # OPTION 2: VS Code Dev Container
+    echo -e "\n${YELLOW}Opening VS Code with Dev Containers...${NC}"
+    echo -e "${YELLOW}VS Code will handle creating and starting the containers.${NC}"
+    echo ""
+    echo -e "${YELLOW}When VS Code opens:${NC}"
+    echo "1. You'll see a notification to 'Reopen in Container'"
+    echo "2. Click this notification to start the container build process"
+    echo "3. Wait for the containers to build and start (may take a few minutes)"
+    echo ""
+    echo -e "${YELLOW}If you encounter issues with VS Code Dev Containers:${NC}"
+    echo "→ Try option 1 instead (Direct Docker start)"
+    echo "→ Or run: code --force-disable-user-env-probe"
+    
+    # Open VS Code
+    code .
+    ;;
+    
+  *)
+    echo -e "${RED}Invalid choice. Exiting.${NC}"
+    exit 1
+    ;;
+esac
 
 echo -e "\n${YELLOW}Happy coding!${NC} 🎉" 

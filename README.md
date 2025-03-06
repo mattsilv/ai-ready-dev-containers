@@ -1,6 +1,18 @@
 # AI-Ready Dev Containers
 
-This repository contains development containers optimized for AI development workflows.
+This repository contains development containers optimized for consistent, reproducible development workflows.
+
+## Why Dev Containers?
+
+Development containers provide significant benefits for engineering teams:
+
+- **Consistent Environments**: Ensures all team members work with identical dependencies, tools, and configurations
+- **Reduced Onboarding Time**: New engineers can start contributing quickly without lengthy environment setup
+- **Minimized "Works on My Machine" Issues**: Eliminates environment-specific bugs and troubleshooting
+- **Production Parity**: Local development closely mirrors production environments
+- **Version-Controlled Configuration**: Environment definitions are tracked alongside code
+
+By standardizing development environments with containers, teams spend less time troubleshooting environment issues and more time building features.
 
 ## Repository Information
 
@@ -8,12 +20,12 @@ This repository contains development containers optimized for AI development wor
 
 ## Overview
 
-This repository provides templates and best practices for creating consistent development environments using Dev Containers. The configurations are designed to be:
+This repository provides templates and best practices for creating consistent development environments using [Dev Containers](https://containers.dev/). The configurations are designed to be:
 
-1. **AI-Assisted Development Ready**: Optimized for developers using AI coding assistants like GitHub Copilot, Cursor, and others
-2. **Reproducible**: Ensuring consistent development experiences across team members
-3. **Production-Ready**: Configurable to match production environments
-4. **Flexible**: Adaptable to various tech stacks and frameworks
+1. **Reproducible**: Ensuring consistent development experiences across team members
+2. **Production-Ready**: Configurable to match production environments
+3. **Flexible**: Adaptable to various tech stacks and frameworks
+4. **AI-Assisted Development Ready**: Optimized for developers using AI coding assistants
 
 ## Architecture
 
@@ -25,7 +37,6 @@ graph TD
         DevUser((Developer)) --> DevFE[Frontend]
         DevFE <--> DevBE[Backend API]
         DevBE <--> DevDB[(Local Database)]
-        DevUser <--> AIAssistant((AI Coding Assistant))
     end
 
     subgraph "Dev Container Configuration"
@@ -35,25 +46,24 @@ graph TD
         DevContainer --> Tools[Development Tools]
     end
 
-    AIAssistant -.-> DevContainer
     DevUser --> DevContainer
 
     subgraph "Production Deployment"
-        ProdEnv[Production Environment] -.-> DevContainer
+        ProdEnv[Production Environment] --> ProdContainers[Containerized Services]
     end
+
+    DevContainer -.-> ProdContainers
 
     classDef users fill:#f9f9f9,stroke:#333,stroke-width:1px;
     classDef components fill:#61DAFB,stroke:#333,stroke-width:1px,color:black;
     classDef database fill:#336791,stroke:#333,stroke-width:1px,color:white;
-    classDef ai fill:#FF6B6B,stroke:#333,stroke-width:1px,color:white;
     classDef prod fill:#5D8C3E,stroke:#333,stroke-width:1px,color:white;
     classDef container fill:#4A89DC,stroke:#333,stroke-width:1px,color:white;
 
     class DevUser users;
     class DevFE,DevBE,Config,Dir,Deps,Tools components;
     class DevDB database;
-    class AIAssistant ai;
-    class ProdEnv prod;
+    class ProdEnv,ProdContainers prod;
     class DevContainer container;
 ```
 

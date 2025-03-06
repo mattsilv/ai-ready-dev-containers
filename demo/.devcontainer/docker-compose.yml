@@ -5,8 +5,6 @@ services:
       target: development
     volumes:
       - ../backend:/app
-      - backend-vscode-bin:/home/vscode/.vscode-server/bin
-      - backend-vscode-ext:/home/vscode/.vscode-server/extensions
     ports:
       - "8001:8000"
     environment:
@@ -14,10 +12,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Use a simple sleep command - VS Code will override this
     command: sleep infinity
     user: vscode
-    # Add tty and stdin_open for better terminal experience
     tty: true
     stdin_open: true
 
@@ -28,15 +24,12 @@ services:
     volumes:
       - ../frontend:/app
       - frontend-node-modules:/app/node_modules
-      - frontend-vscode-bin:/home/vscode/.vscode-server/bin
-      - frontend-vscode-ext:/home/vscode/.vscode-server/extensions
     ports:
       - "3001:3000"
     depends_on:
       - backend
     command: /bin/sh -c "npm run dev"
     user: vscode
-    # Add tty and stdin_open for better terminal experience
     tty: true
     stdin_open: true
 
@@ -59,8 +52,4 @@ services:
 
 volumes:
   postgres-data:
-  backend-vscode-bin:
-  backend-vscode-ext:
-  frontend-vscode-bin:
-  frontend-vscode-ext:
   frontend-node-modules:

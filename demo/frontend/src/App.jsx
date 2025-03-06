@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const response = await axios.get("http://localhost:8001/health");
+        const response = await axios.get("/api/health");
         setApiHealth(response.data.status);
       } catch (err) {
         setApiHealth("down");
@@ -29,7 +29,7 @@ function App() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8001/items");
+        const response = await axios.get("/api/items");
         setItems(response.data);
         setError(null);
       } catch (err) {
@@ -55,7 +55,7 @@ function App() {
     if (!newItem.name) return;
 
     try {
-      const response = await axios.post("http://localhost:8001/items", newItem);
+      const response = await axios.post("/api/items", newItem);
       setItems([...items, response.data]);
       setNewItem({ name: "", description: "" });
       setError(null);

@@ -6,7 +6,6 @@
   "remoteUser": "vscode",
   "forwardPorts": [3001, 8001, 5434],
   "shutdownAction": "stopCompose",
-  "postStartCommand": "cd /app && bash -c 'sleep 5 && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload &'",
   "customizations": {
     "vscode": {
       "extensions": [

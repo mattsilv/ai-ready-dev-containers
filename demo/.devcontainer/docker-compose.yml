@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   backend:
     build:
@@ -14,8 +16,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    # Don't use command here as it will be overridden by VSCode
+    # command: sleep infinity
     user: vscode
+    # Add tty and stdin_open for better terminal experience
+    tty: true
+    stdin_open: true
 
   frontend:
     build:
@@ -31,6 +37,11 @@ services:
     depends_on:
       - backend
     user: vscode
+    # Add tty and stdin_open for better terminal experience
+    tty: true
+    stdin_open: true
+    # Add sleep command for VSCode to properly connect
+    command: /bin/sh -c "sleep 2 && npm run dev"
 
   db:
     image: postgres:16-alpine

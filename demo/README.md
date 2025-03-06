@@ -23,15 +23,16 @@ demo/
 │       ├── database.py         # Database connection setup
 │       ├── models.py           # SQLAlchemy database models
 │       └── schemas.py          # Pydantic models for API validation
-└── frontend/                   # React frontend application
-    ├── Dockerfile              # Multi-stage build for frontend
-    ├── package.json            # Node.js dependencies
-    ├── vite.config.js          # Vite configuration
-    └── src/                    # Application source code
-        ├── App.jsx             # Main React component
-        ├── App.css             # Component styling
-        ├── main.jsx            # React application entry point
-        └── index.css           # Global styles
+├── frontend/                   # React frontend application
+│   ├── Dockerfile              # Multi-stage build for frontend
+│   ├── package.json            # Node.js dependencies
+│   ├── vite.config.js          # Vite configuration
+│   └── src/                    # Application source code
+│       ├── App.jsx             # Main React component
+│       ├── App.css             # Component styling
+│       ├── main.jsx            # React application entry point
+│       └── index.css           # Global styles
+└── START_HERE.sh               # Single entry point script to run the demo
 ```
 
 ## Getting Started
@@ -44,19 +45,17 @@ demo/
 
 ### Running the Demo
 
-#### Option 1: Using the Quick Start Script (Recommended)
-
-We've included a quick start script that handles everything in one step. **Run these commands from the `demo` directory**:
+The demo has a single entry point script that handles everything:
 
 ```bash
 # Navigate to the demo directory if you're not already there
 cd path/to/ai-ready-dev-containers/demo
 
 # Make sure the script is executable
-chmod +x quickstart.sh
+chmod +x START_HERE.sh
 
-# Run the quick start script
-./quickstart.sh
+# Run the script
+./START_HERE.sh
 ```
 
 This script will:
@@ -65,48 +64,21 @@ This script will:
 2. Install the Dev Containers extension if needed
 3. Create necessary directories
 4. Stop any existing containers
-5. Open VS Code
-6. Prompt you to "Reopen in Container"
+5. Start the containers directly (so you can access the app immediately)
+6. Open VS Code (optional) and prompt you to "Reopen in Container"
 
-Once VS Code reopens in the container (this may take a few minutes the first time):
+You can access the application in two ways:
 
-- The application will be running automatically
-- Access the frontend at: http://localhost:3001
-- Access the API docs at: http://localhost:8001/docs
+1. **Directly in your browser:**
 
-That's it! No other commands needed.
+   - Frontend: http://localhost:3001
+   - API docs: http://localhost:8001/docs
 
-#### Option 2: Using the Setup Script (Alternative)
+2. **Through the VS Code Dev Container:**
+   - When prompted in VS Code, click "Reopen in Container"
+   - Wait for VS Code to connect to the container
 
-We've included a setup script that will check your prerequisites and create all necessary directories:
-
-```bash
-# Run the setup script
-./setup.sh
-```
-
-After the script completes, open the demo folder in VS Code and click "Reopen in Container" when prompted.
-
-#### Option 3: Manual Setup
-
-1. Create the postgres-data directory if it doesn't exist:
-
-   ```bash
-   mkdir -p .docker/postgres-data
-   ```
-
-2. Open the demo folder in VS Code
-3. Click on the green button in the bottom-left corner and select "Reopen in Container"
-4. Wait for the containers to build and start (this may take a few minutes the first time)
-
-### Accessing the Services
-
-Once the containers are running, you can access:
-
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
-- PostgreSQL: postgresql://user:password@localhost:5434/demo_db
+This dual approach ensures you can work even if the VS Code Dev Container extension has issues.
 
 ## Development Workflow
 

@@ -5,9 +5,8 @@
   "workspaceFolder": "/app",
   "remoteUser": "vscode",
   "forwardPorts": [3001, 8001, 5434],
-  "overrideCommand": true,
   "shutdownAction": "stopCompose",
-  "postStartCommand": "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload &",
+  "postStartCommand": "cd /app && bash -c 'sleep 5 && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload &'",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -24,7 +23,7 @@
         "python.linting.enabled": true,
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": "true"
+          "source.fixAll.eslint": "explicit"
         }
       }
     }

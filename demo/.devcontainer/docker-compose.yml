@@ -32,7 +32,9 @@ services:
       - "3001:3000"
     depends_on:
       - backend
-    command: /bin/sh -c "npm run dev"
+    command: /bin/sh -c "cd /app && npm run dev"
+    environment:
+      - VITE_API_URL=http://localhost:8001
     user: vscode
     tty: true
     stdin_open: true

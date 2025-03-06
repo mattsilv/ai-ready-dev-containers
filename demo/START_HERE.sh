@@ -44,6 +44,37 @@ if [ ! -f .docker/init-scripts/setup.sql ]; then
     echo -e "${GREEN}✅ Created setup.sql${NC}"
 fi
 
+# Check if index.html exists in public directory, create it if it doesn't
+if [ ! -f frontend/public/index.html ]; then
+    echo -e "${YELLOW}Creating index.html in frontend/public directory...${NC}"
+    mkdir -p frontend/public
+    cat > frontend/public/index.html << 'EOL'
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevContainer Demo App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+EOL
+    echo -e "${GREEN}✅ Created index.html${NC}"
+    
+    # Create vite.svg favicon
+    cat > frontend/public/vite.svg << 'EOL'
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="4" fill="#646CFF"/>
+  <path d="M16 8L24 16L16 24L8 16L16 8Z" fill="white"/>
+</svg>
+EOL
+    echo -e "${GREEN}✅ Created vite.svg favicon${NC}"
+fi
+
 # Check if ports are already in use by non-demo containers
 echo -e "\n${YELLOW}Checking for port conflicts...${NC}"
 PORT_8001_STATUS=$(lsof -i:8001 -sTCP:LISTEN -t >/dev/null 2>&1; echo $?)
@@ -90,6 +121,11 @@ else
     fi
 fi
 
+# Update frontend API URLs to use the correct port
+echo -e "\n${YELLOW}Updating frontend API URLs...${NC}"
+sed -i '' 's/http:\/\/localhost:8000/http:\/\/localhost:8001/g' frontend/src/App.jsx
+echo -e "${GREEN}✅ Updated frontend API URLs${NC}"
+
 # Start containers directly
 echo -e "\n${YELLOW}Starting containers with Docker...${NC}"
 docker-compose -f .devcontainer/docker-compose.yml up -d --build
@@ -106,31 +142,9 @@ else
     docker ps --filter "label=com.demo.app=ai-ready-demo" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 fi
 
-# Update frontend configuration to fix routing issues
-echo -e "\n${YELLOW}Updating frontend configuration...${NC}"
-if ! docker exec -i devcontainer-frontend-1 sh -c "cd /app && sed -i 's/host: .*/host: \"0.0.0.0\",/g' vite.config.js"; then
-    echo -e "${YELLOW}Warning: Could not update frontend configuration directly.${NC}"
-    echo -e "${YELLOW}Creating a temporary file to update the configuration...${NC}"
-    
-    # Alternative approach: Create a temporary file and copy it into the container
-    echo "import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: \"0.0.0.0\",
-    port: 3000,
-  },
-});" > /tmp/vite.config.js
-    
-    docker cp /tmp/vite.config.js devcontainer-frontend-1:/app/vite.config.js
-    rm /tmp/vite.config.js
-fi
-
-docker restart devcontainer-frontend-1
-sleep 3
-echo -e "${GREEN}✅ Frontend configuration updated${NC}"
+# Wait for frontend to be ready
+echo -e "\n${YELLOW}Waiting for frontend to be ready...${NC}"
+sleep 5
 
 # Start the backend service manually, redirecting output to log file
 echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"

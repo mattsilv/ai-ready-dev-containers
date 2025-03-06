@@ -1,13 +1,13 @@
 # Dev Container Demo - React + FastAPI + PostgreSQL
 
-This is a working demonstration of a development environment using VS Code Dev Containers with React frontend, FastAPI backend, and PostgreSQL database.
+This is a working demonstration of a development environment using Docker containers with React frontend, FastAPI backend, and PostgreSQL database.
 
 ## Project Structure
 
 ```
 demo/
 ├── .devcontainer/              # Dev container configuration
-│   ├── devcontainer.json       # VS Code specific settings
+│   ├── devcontainer.json       # Container configuration
 │   └── docker-compose.yml      # Services configuration
 ├── .docker/
 │   ├── postgres-data/          # PostgreSQL data (created at runtime)
@@ -40,8 +40,6 @@ demo/
 ### Prerequisites
 
 - [Docker](https://www.docker.com/products/docker-desktop/)
-- [VS Code](https://code.visualstudio.com/)
-- [Dev Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
 ### Running the Demo
 
@@ -60,25 +58,15 @@ chmod +x START_HERE.sh
 
 This script will:
 
-1. Check if Docker and VS Code are installed
-2. Install the Dev Containers extension if needed
-3. Create necessary directories
-4. Stop any existing containers
-5. Start the containers directly (so you can access the app immediately)
-6. Open VS Code (optional) and prompt you to "Reopen in Container"
+1. Check if Docker is installed
+2. Create necessary directories
+3. Stop any existing containers
+4. Start the containers directly (so you can access the app immediately)
 
-You can access the application in two ways:
+You can access the application directly in your browser:
 
-1. **Directly in your browser:**
-
-   - Frontend: http://localhost:3001
-   - API docs: http://localhost:8001/docs
-
-2. **Through the VS Code Dev Container:**
-   - When prompted in VS Code, click "Reopen in Container"
-   - Wait for VS Code to connect to the container
-
-This dual approach ensures you can work even if the VS Code Dev Container extension has issues.
+- Frontend: http://localhost:3001
+- API docs: http://localhost:8001/docs
 
 ## Development Workflow
 
@@ -124,19 +112,17 @@ This demo showcases several key features of Dev Containers:
 
 2. **Isolated Dependencies**: Each service has its own isolated dependencies, preventing conflicts.
 
-3. **VS Code Extensions**: The development environment comes pre-configured with useful extensions for Python and JavaScript development.
+3. **Multi-Stage Dockerfiles**: Both frontend and backend use multi-stage builds to optimize for both development and production.
 
-4. **Multi-Stage Dockerfiles**: Both frontend and backend use multi-stage builds to optimize for both development and production.
+4. **Auto-Reload**: Both the FastAPI backend and React frontend automatically reload when code changes are made.
 
-5. **Auto-Reload**: Both the FastAPI backend and React frontend automatically reload when code changes are made.
+5. **Database Migrations**: Alembic is set up for managing database schema changes.
 
-6. **Database Migrations**: Alembic is set up for managing database schema changes.
+6. **API Documentation**: FastAPI's automatic OpenAPI documentation is available at `/docs`.
 
-7. **API Documentation**: FastAPI's automatic OpenAPI documentation is available at `/docs`.
+7. **CORS Configured**: The backend is configured to allow requests from the frontend.
 
-8. **CORS Configured**: The backend is configured to allow requests from the frontend.
-
-9. **Hello World Demo App**: A simple demo application is included that demonstrates the full stack, with a React frontend fetching data from the PostgreSQL database via the FastAPI backend.
+8. **Hello World Demo App**: A simple demo application is included that demonstrates the full stack, with a React frontend fetching data from the PostgreSQL database via the FastAPI backend.
 
 ## Hello World Demo App
 
@@ -161,5 +147,4 @@ This demo provides a starting point that you can customize for your own projects
 1. **Change Database Schema**: Modify `backend/src/models.py` to define your database schema
 2. **Modify API Endpoints**: Update `backend/src/main.py` to change or add API endpoints
 3. **Update React Components**: Modify files in the `frontend/src` directory
-4. **Add VS Code Extensions**: Edit `.devcontainer/devcontainer.json` to add more extensions
-5. **Change Environment Variables**: Update the environment variables in `.devcontainer/docker-compose.yml`
+4. **Change Environment Variables**: Update the environment variables in `.devcontainer/docker-compose.yml`

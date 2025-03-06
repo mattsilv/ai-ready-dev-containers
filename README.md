@@ -121,8 +121,6 @@ graph TD
 ### Prerequisites
 
 - [Docker](https://www.docker.com/products/docker-desktop/)
-- [VS Code](https://code.visualstudio.com/)
-- [Dev Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
 ### Quick Start
 
@@ -142,7 +140,11 @@ graph TD
 
 4. Customize the configuration files as needed
 
-5. Open your project in VS Code and click "Reopen in Container" when prompted
+5. Start your development environment using Docker Compose:
+
+   ```bash
+   docker-compose up -d
+   ```
 
 ## Available Templates
 

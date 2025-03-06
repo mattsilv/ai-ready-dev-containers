@@ -67,6 +67,55 @@ graph TD
     class DevContainer container;
 ```
 
+### Example: React + FastAPI Template
+
+```mermaid
+graph TD
+    subgraph "Local Development Environment"
+        DevUser((Developer))
+
+        subgraph "Frontend Container"
+            React[React App] --> Vite[Vite Dev Server]
+            React --> TypeScript[TypeScript]
+            React --> TailwindCSS[TailwindCSS]
+        end
+
+        subgraph "Backend Container"
+            FastAPI[FastAPI] --> Python[Python 3.11]
+            FastAPI --> Uvicorn[Uvicorn Server]
+            FastAPI --> SQLAlchemy[SQLAlchemy ORM]
+        end
+
+        subgraph "Database Container"
+            Postgres[(PostgreSQL)]
+        end
+
+        React <--> FastAPI
+        FastAPI <--> Postgres
+        DevUser --> React
+        DevUser --> FastAPI
+    end
+
+    subgraph "Dev Container Configuration"
+        DockerCompose[Docker Compose] --> FrontendConfig[Frontend Config]
+        DockerCompose --> BackendConfig[Backend Config]
+        DockerCompose --> DBConfig[Database Config]
+        DockerCompose --> NetworkConfig[Network Config]
+    end
+
+    classDef users fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    classDef frontend fill:#61DAFB,stroke:#333,stroke-width:1px,color:black;
+    classDef backend fill:#4A89DC,stroke:#333,stroke-width:1px,color:white;
+    classDef database fill:#336791,stroke:#333,stroke-width:1px,color:white;
+    classDef config fill:#5D8C3E,stroke:#333,stroke-width:1px,color:white;
+
+    class DevUser users;
+    class React,Vite,TypeScript,TailwindCSS frontend;
+    class FastAPI,Python,Uvicorn,SQLAlchemy backend;
+    class Postgres database;
+    class DockerCompose,FrontendConfig,BackendConfig,DBConfig,NetworkConfig config;
+```
+
 ## Getting Started
 
 ### Prerequisites

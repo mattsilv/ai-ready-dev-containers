@@ -10,6 +10,10 @@ NC='\033[0m' # No Color
 # Enable error handling
 set -e
 
+# Create a log file for backend output
+LOG_FILE="/tmp/demo-backend-$(date +%s).log"
+touch "$LOG_FILE"
+
 echo -e "${BLUE}🚀 Dev Container Demo - START HERE${NC}"
 echo "======================================="
 
@@ -93,11 +97,18 @@ if [ "$EXISTING_CONTAINERS" -gt 0 ]; then
                 echo -e "${GREEN}✅ Containers are already running${NC}"
             fi
             
-            # Start the backend service manually
+            # Start the backend service manually, redirecting output to log file
             echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
-            docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" &
+            docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" > "$LOG_FILE" 2>&1 &
             sleep 2
             echo -e "${GREEN}✅ Backend service started${NC}"
+            
+            # Update frontend configuration to fix routing issues
+            echo -e "\n${YELLOW}Updating frontend configuration...${NC}"
+            docker exec -i devcontainer-frontend-1 bash -c "cd /app && sed -i 's/host: .*/host: \"0.0.0.0\",/g' vite.config.js"
+            docker restart devcontainer-frontend-1
+            sleep 3
+            echo -e "${GREEN}✅ Frontend configuration updated${NC}"
             
             echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
             echo ""
@@ -105,6 +116,7 @@ if [ "$EXISTING_CONTAINERS" -gt 0 ]; then
             echo "→ Frontend: http://localhost:3001"
             echo "→ API docs: http://localhost:8001/docs"
             echo ""
+            echo -e "${YELLOW}Backend logs are being written to:${NC} $LOG_FILE"
             echo -e "${YELLOW}Happy coding!${NC} 🎉"
             exit 0
             ;;
@@ -139,17 +151,29 @@ else
     docker ps --filter "label=com.demo.app=ai-ready-demo" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 fi
 
-# Start the backend service manually
+# Update frontend configuration to fix routing issues
+echo -e "\n${YELLOW}Updating frontend configuration...${NC}"
+docker exec -i devcontainer-frontend-1 bash -c "cd /app && sed -i 's/host: .*/host: \"0.0.0.0\",/g' vite.config.js"
+docker restart devcontainer-frontend-1
+sleep 3
+echo -e "${GREEN}✅ Frontend configuration updated${NC}"
+
+# Start the backend service manually, redirecting output to log file
 echo -e "\n${YELLOW}Starting the FastAPI backend service...${NC}"
-docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" &
+docker exec -i devcontainer-backend-1 bash -c "cd /app && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" > "$LOG_FILE" 2>&1 &
 sleep 2
 echo -e "${GREEN}✅ Backend service started${NC}"
 
+# Display a clear summary at the end
 echo -e "\n${GREEN}🚀 Dev environment started!${NC}"
 echo ""
+echo -e "${BLUE}=== IMPORTANT INFORMATION ====${NC}"
 echo -e "${YELLOW}You can access the application at:${NC}"
 echo "→ Frontend: http://localhost:3001"
 echo "→ API docs: http://localhost:8001/docs"
+echo ""
+echo -e "${YELLOW}Backend logs are being written to:${NC} $LOG_FILE"
+echo -e "${YELLOW}To view logs in real-time:${NC} tail -f $LOG_FILE"
 echo ""
 echo -e "${YELLOW}To open VS Code in this directory:${NC}"
 echo "→ Run: code ."

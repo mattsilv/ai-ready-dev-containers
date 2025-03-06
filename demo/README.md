@@ -6,10 +6,15 @@ This is a working demonstration of a development environment using Docker contai
 
 ```mermaid
 graph TD
-    User((User)) --> |http://localhost:3001| Frontend[Frontend Container<br>Nginx/React]
-    User --> |http://localhost:8001/docs| Backend[Backend Container<br>FastAPI]
-    Frontend --> |/api proxy| Backend
-    Backend --> |PostgreSQL<br>Port 5432| Database[(Database Container<br>PostgreSQL)]
+    User((User))
+    Frontend[Frontend Container<br>Nginx/React<br>Port 3001]
+    Backend[Backend Container<br>FastAPI<br>Port 8001]
+    Database[(Database Container<br>PostgreSQL<br>Port 5432)]
+
+    User --> Frontend
+    User --> Backend
+    Frontend -- "/api proxy" --> Backend
+    Backend --> Database
 
     classDef container fill:#4A89DC,stroke:#333,stroke-width:1px,color:white;
     classDef database fill:#336791,stroke:#333,stroke-width:1px,color:white;

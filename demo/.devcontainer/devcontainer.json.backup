@@ -1,0 +1,32 @@
+{
+  "name": "React-FastAPI-Postgres Dev Environment",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "backend",
+  "workspaceFolder": "/app",
+  "remoteUser": "vscode",
+  "forwardPorts": [3001, 8001, 5434],
+  "overrideCommand": true,
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets",
+        "ms-vscode.vscode-typescript-next",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg"
+      ],
+      "settings": {
+        "python.linting.enabled": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "true"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "echo 'Dev container built successfully!'"
+}

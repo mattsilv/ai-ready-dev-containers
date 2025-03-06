@@ -1,0 +1,11 @@
+{
+  "name": "Simple Test Container",
+  "image": "python:3.12-slim",
+  "remoteUser": "root",
+  "forwardPorts": [8000],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}

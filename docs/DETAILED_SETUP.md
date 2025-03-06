@@ -528,9 +528,47 @@ Follow these steps to set up the dev container:
    cd your-project
    ```
 
-2. **Create Environment Files**
+2. **Setup Options**
+
+   ### Option 1: Using the Setup Script (Recommended)
+
+   We recommend creating a setup script for your project that automates the creation of necessary directories and checking prerequisites:
 
    ```bash
+   # Example setup.sh script - see templates/setup-script-template.sh for a full example
+   #!/bin/bash
+   
+   echo "Setting up dev container prerequisites..."
+   
+   # Create required directories
+   mkdir -p .docker/postgres-data
+   mkdir -p .docker/init-scripts
+   
+   # Check for Docker and VS Code
+   # [Additional checks and setup steps would go here]
+   
+   echo "Setup complete! You can now open VS Code and start the dev container."
+   ```
+
+   Make the script executable and run it:
+
+   ```bash
+   chmod +x setup.sh
+   ./setup.sh
+   ```
+
+   ### Option 2: Manual Setup
+
+   If you prefer to set up manually:
+
+   ```bash
+   # Create postgres-data directory for database persistence
+   mkdir -p .docker/postgres-data
+   
+   # Create init-scripts directory for database initialization
+   mkdir -p .docker/init-scripts
+   
+   # Copy environment file templates
    cp backend/.env.example backend/.env
    cp frontend/.env.example frontend/.env
    ```
@@ -657,6 +695,7 @@ For larger projects, consider these additions:
 
    - Verify file permissions in mounted directories
    - Check for syntax errors in docker-compose.yml
+   - Ensure the postgres-data directory exists before starting containers
    - Try using named volumes instead of bind mounts
 
 4. **VS Code Extension Problems**:

@@ -1,0 +1,58 @@
+services:
+  backend:
+    build:
+      context: ../backend
+      target: development
+    volumes:
+      - ../backend:/app
+      - backend-vscode-bin:/home/vscode/.vscode-server/bin
+      - backend-vscode-ext:/home/vscode/.vscode-server/extensions
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/demo_db
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    user: vscode
+
+  frontend:
+    build:
+      context: ../frontend
+      target: development
+    volumes:
+      - ../frontend:/app
+      - frontend-node-modules:/app/node_modules
+      - frontend-vscode-bin:/home/vscode/.vscode-server/bin
+      - frontend-vscode-ext:/home/vscode/.vscode-server/extensions
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    user: vscode
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: demo_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ../.docker/init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d demo_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres-data:
+  backend-vscode-bin:
+  backend-vscode-ext:
+  frontend-vscode-bin:
+  frontend-vscode-ext:
+  frontend-node-modules:

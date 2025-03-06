@@ -1,0 +1,52 @@
+{
+  "projectRules": {
+    "name": "React-FastAPI-Postgres Demo",
+    "devEnvironment": {
+      "type": "devcontainer",
+      "services": [
+        {
+          "name": "backend",
+          "type": "api",
+          "language": "python",
+          "framework": "fastapi"
+        },
+        {
+          "name": "frontend",
+          "type": "web",
+          "language": "javascript",
+          "framework": "react"
+        },
+        {
+          "name": "db",
+          "type": "database",
+          "engine": "postgresql"
+        }
+      ],
+      "ports": {
+        "backend": 8000,
+        "frontend": 3000,
+        "db": 5432
+      }
+    },
+    "workspaceStructure": {
+      "backend": "./backend",
+      "frontend": "./frontend",
+      "devcontainer": "./.devcontainer"
+    },
+    "database": {
+      "engine": "postgresql",
+      "models": "./backend/src/models.py",
+      "migrations": "./backend/migrations",
+      "mainEntities": ["Item"]
+    },
+    "api": {
+      "mainFile": "./backend/src/main.py",
+      "routes": "./backend/src/main.py",
+      "schemas": "./backend/src/schemas.py"
+    },
+    "frontend": {
+      "components": "./frontend/src",
+      "entryPoint": "./frontend/src/main.jsx"
+    }
+  }
+}

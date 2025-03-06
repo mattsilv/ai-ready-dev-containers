@@ -528,9 +528,35 @@ Follow these steps to set up the dev container:
    cd your-project
    ```
 
-2. **Create Environment Files**
+2. **Setup Options**
+
+   ### Option 1: Using the Setup Script (Recommended)
+
+   Include a setup script in your project (see `setup-script-template.sh` in the templates directory):
 
    ```bash
+   # Copy the setup script template to your project
+   cp /path/to/templates/setup-script-template.sh ./setup.sh
+   chmod +x ./setup.sh
+   
+   # Run the setup script
+   ./setup.sh
+   ```
+
+   The setup script will:
+   - Check if Docker is installed and running
+   - Check if VS Code and the Dev Containers extension are installed
+   - Create the postgres-data directory and other required directories
+   - Create default configuration files if they don't exist
+
+   ### Option 2: Manual Setup
+
+   ```bash
+   # Create postgres-data directory for database persistence
+   mkdir -p .docker/postgres-data
+   mkdir -p .docker/init-scripts
+   
+   # Copy environment file templates
    cp backend/.env.example backend/.env
    cp frontend/.env.example frontend/.env
    ```

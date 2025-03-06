@@ -84,7 +84,7 @@ function App() {
 
       <p className="description">
         This simple app demonstrates a complete fullstack application running in
-        a VS Code Dev Container. It features a <strong>React</strong> frontend,{" "}
+        a development container. It features a <strong>React</strong> frontend,{" "}
         <strong>FastAPI</strong> backend, and <strong>PostgreSQL</strong>{" "}
         database.
       </p>

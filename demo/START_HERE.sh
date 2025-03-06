@@ -159,8 +159,5 @@ echo ""
 echo -e "${YELLOW}Backend logs are being written to:${NC} $LOG_FILE"
 echo -e "${YELLOW}To view logs in real-time:${NC} tail -f $LOG_FILE"
 echo ""
-echo -e "${YELLOW}To open VS Code in this directory:${NC}"
-echo "→ Run: code ."
-echo -e "${YELLOW}(Note: VS Code Dev Container integration is disabled - use browser access only)${NC}"
 
 echo -e "\n${YELLOW}Happy coding!${NC} 🎉" 

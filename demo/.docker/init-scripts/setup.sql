@@ -19,7 +19,7 @@ VALUES
   ('React Frontend', 'The frontend is built with React and uses Vite for fast development', true),
   ('FastAPI Backend', 'The backend is built with FastAPI, a modern Python web framework', true),
   ('PostgreSQL Database', 'Data is stored in a PostgreSQL database running in a container', true),
-  ('VS Code Integration', 'The dev container is fully integrated with VS Code for a seamless development experience', true),
+  ('Development Environment', 'The dev container provides a consistent development environment for all contributors', true),
   ('Hot Reloading', 'Both frontend and backend support hot reloading for rapid development', true),
   ('Docker Compose', 'The entire stack is orchestrated with Docker Compose for easy startup', true)
 ON CONFLICT DO NOTHING;

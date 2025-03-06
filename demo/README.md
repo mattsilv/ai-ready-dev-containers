@@ -2,6 +2,24 @@
 
 This is a working demonstration of a development environment using Docker containers with React frontend, FastAPI backend, and PostgreSQL database.
 
+## Architecture
+
+```mermaid
+graph TD
+    User((User)) --> |http://localhost:3001| Frontend[Frontend Container<br>Nginx/React]
+    User --> |http://localhost:8001/docs| Backend[Backend Container<br>FastAPI]
+    Frontend --> |/api proxy| Backend
+    Backend --> |PostgreSQL<br>Port 5432| Database[(Database Container<br>PostgreSQL)]
+
+    classDef container fill:#4A89DC,stroke:#333,stroke-width:1px,color:white;
+    classDef database fill:#336791,stroke:#333,stroke-width:1px,color:white;
+    classDef user fill:#f9f9f9,stroke:#333,stroke-width:1px;
+
+    class Frontend,Backend container;
+    class Database database;
+    class User user;
+```
+
 ## Project Structure
 
 ```

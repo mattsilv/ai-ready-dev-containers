@@ -71,10 +71,10 @@ The demo has a single entry point script that handles everything:
 cd path/to/ai-ready-dev-containers/demo
 
 # Make sure the script is executable
-chmod +x START_HERE.sh
+chmod +x start_here.sh
 
 # Run the script
-./START_HERE.sh
+./start_here.sh
 ```
 
 This script will:

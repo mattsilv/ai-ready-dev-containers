@@ -1,23 +1,28 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .database import engine, get_db
 from typing import List
+import time
+from fastapi.responses import JSONResponse
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Demo API", description="Dev Container Demo API")
 
-# Add CORS middleware
+# Add CORS middleware with proper frontend URLs
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3001", "http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
+
+# Remove the rate limiting middleware for now to fix the error
+# We'll add it back properly later if needed
 
 @app.get("/health")
 def health_check():

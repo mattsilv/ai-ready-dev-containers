@@ -1,4 +1,4 @@
-FROM node:20-alpine as development
+FROM node:20.10.0-alpine3.19 as development
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ USER vscode
 
 CMD ["npm", "run", "dev"]
 
-FROM node:20-alpine as build
+FROM node:20.10.0-alpine3.19 as build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -36,7 +36,7 @@ RUN mkdir -p public && \
     fi
 RUN npm run build
 
-FROM nginx:alpine as production
+FROM nginx:1.25.3-alpine3.18 as production
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80

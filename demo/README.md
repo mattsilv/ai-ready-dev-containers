@@ -53,7 +53,7 @@ demo/
 │       ├── App.css             # Component styling
 │       ├── main.jsx            # React application entry point
 │       └── index.css           # Global styles
-└── START_HERE.sh               # Single entry point script to run the demo
+└── start_here.sh               # Single entry point script to run the demo
 ```
 
 ## Getting Started
@@ -71,10 +71,10 @@ The demo has a single entry point script that handles everything:
 cd path/to/ai-ready-dev-containers/demo
 
 # Make sure the script is executable
-chmod +x START_HERE.sh
+chmod +x start_here.sh
 
 # Run the script
-./START_HERE.sh
+./start_here.sh
 ```
 
 This script will:

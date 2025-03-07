@@ -1,4 +1,4 @@
-FROM python:3.12-slim as development
+FROM python:3.11-slim-bookworm as development
 
 WORKDIR /app
 
@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     procps \
     vim \
+    libpq-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
@@ -25,11 +27,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Development stage doesn't need CMD as it's specified in docker-compose.yml
 
-FROM python:3.12-slim as production
+FROM python:3.11-slim-bookworm as production
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     curl \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

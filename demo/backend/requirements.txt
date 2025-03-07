@@ -1,4 +1,4 @@
-fastapi==0.104.1
+fastapi==0.103.1
 uvicorn==0.23.2
 gunicorn==21.2.0
 psycopg2-binary==2.9.9
@@ -9,5 +9,5 @@ sqlalchemy==2.0.23
 httpx==0.25.1
 pytest==7.4.3
 requests==2.31.0
-# Use the latest version of aiohttp for Python 3.12 compatibility
-aiohttp>=3.9.0
+# Use a specific version of aiohttp compatible with Python 3.11
+aiohttp==3.9.1

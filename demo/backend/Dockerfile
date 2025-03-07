@@ -3,13 +3,13 @@ FROM python:3.13.2-slim-bookworm as development
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    curl=7.88.1-10+deb12u5 \
-    build-essential=12.9 \
-    git=1:2.39.2-1.1 \
-    iputils-ping=3:20221126-1 \
-    net-tools=2.10-0.1 \
-    procps=2:4.0.2-3 \
-    vim=2:9.0.1378-2 \
+    curl \
+    build-essential \
+    git \
+    iputils-ping \
+    net-tools \
+    procps \
+    vim \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
@@ -29,7 +29,7 @@ FROM python:3.13.2-slim-bookworm as production
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    curl=7.88.1-10+deb12u5 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

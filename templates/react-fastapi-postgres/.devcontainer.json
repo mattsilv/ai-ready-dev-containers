@@ -1,0 +1,48 @@
+{
+  "name": "React-FastAPI-PostgreSQL Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "backend",
+  "workspaceFolder": "/app",
+
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "docker-in-docker": {
+      "version": "latest",
+      "moby": true
+    }
+  },
+
+  "forwardPorts": [3001, 8001, 5432],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "mhutchie.git-graph",
+        "cweijan.vscode-postgresql-client2"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true,
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/.venv": true,
+          "**/node_modules": true
+        }
+      }
+    }
+  },
+
+  "remoteUser": "vscode",
+
+  "postCreateCommand": "echo 'Dev container is ready! Run ./start_here.sh to launch the application.'"
+}

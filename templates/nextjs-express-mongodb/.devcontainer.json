@@ -1,0 +1,54 @@
+{
+  "name": "Next.js-Express-MongoDB Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/app",
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "docker-in-docker": {
+      "version": "latest",
+      "moby": true
+    }
+  },
+
+  "forwardPorts": [3001, 4001, 27017],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "dsznajder.es7-react-js-snippets",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker",
+        "MongoDB.mongodb-vscode",
+        "mhutchie.git-graph"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "eslint.validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact"
+        ],
+        "files.exclude": {
+          "**/.git": true,
+          "**/.DS_Store": true,
+          "**/node_modules": true,
+          "**/.next": false
+        }
+      }
+    }
+  },
+
+  "remoteUser": "node",
+
+  "postCreateCommand": "echo 'Dev container is ready! Run ./start_here.sh to launch the application.'"
+}

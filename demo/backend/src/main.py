@@ -2,10 +2,14 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from . import models, schemas
-from .database import engine, get_db
+from .database import engine, get_db, SessionLocal
 from typing import List
 import time
+import os
 from fastapi.responses import JSONResponse
+
+# Ensure the directory for SQLite exists
+os.makedirs(os.path.dirname("/app/data/demo.db"), exist_ok=True)
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -31,6 +35,24 @@ def health_check():
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Demo API"}
+
+# Create sample data if the database is empty
+@app.on_event("startup")
+def create_initial_data():
+    db = SessionLocal()
+    # Check if we have any items
+    if db.query(models.Item).count() == 0:
+        # Add some sample items
+        sample_items = [
+            {"name": "Sample Item 1", "description": "This is a sample item"},
+            {"name": "Sample Item 2", "description": "Another sample item"},
+            {"name": "Sample Item 3", "description": "Yet another sample item"}
+        ]
+        for item_data in sample_items:
+            db_item = models.Item(**item_data)
+            db.add(db_item)
+        db.commit()
+    db.close()
 
 @app.get("/items", response_model=List[schemas.Item])
 def get_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

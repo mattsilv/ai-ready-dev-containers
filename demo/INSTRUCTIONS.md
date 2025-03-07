@@ -21,7 +21,7 @@ Run the included setup script that will check prerequisites and create all neces
 cd /path/to/ai-ready-dev-containers/demo
 
 # Run the setup script
-./setup.sh
+./start_here.sh
 ```
 
 After running the setup script, open VS Code and start the container:
@@ -63,6 +63,7 @@ This demo showcases several important dev container features:
 ### 1. Consistent Environment
 
 All team members work with identical versions of:
+
 - Python 3.12
 - Node.js 20
 - PostgreSQL 16
@@ -71,6 +72,7 @@ All team members work with identical versions of:
 ### 2. VS Code Integration
 
 The `.devcontainer/devcontainer.json` configures:
+
 - Recommended extensions for Python and JavaScript development
 - Editor settings like format-on-save
 - Port forwarding
@@ -78,6 +80,7 @@ The `.devcontainer/devcontainer.json` configures:
 ### 3. Multi-Container Setup
 
 The dev environment consists of three interconnected services:
+
 - Backend (FastAPI)
 - Frontend (React)
 - Database (PostgreSQL)
@@ -85,6 +88,7 @@ The dev environment consists of three interconnected services:
 ### 4. Development Workflow
 
 Experience a seamless development workflow:
+
 - Code changes in the backend automatically trigger a reload
 - Code changes in the frontend automatically refresh the browser
 - Database migrations can be created and applied using Alembic
@@ -92,6 +96,7 @@ Experience a seamless development workflow:
 ### 5. AI Ready
 
 The dev container is configured for AI-assisted development:
+
 - `.cursor.json` file provides context for Cursor IDE
 - Directory structure and configurations follow best practices
 
@@ -180,6 +185,7 @@ You can use this demo as a starting point for your own projects:
 ### Common Issues
 
 1. **Container fails to start**: The most common cause is the missing postgres-data directory. Make sure you've created it before starting the container:
+
    ```bash
    mkdir -p .docker/postgres-data
    ```

@@ -114,6 +114,26 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Add styles for horizontal form layout */
+.horizontal-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.horizontal-form .form-group {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
+.horizontal-form button {
+  margin-bottom: 0;
+  height: 42px;
+  min-width: 120px;
+}
+
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
@@ -135,19 +155,26 @@ textarea {
   resize: vertical;
 }
 
-button {
-  background-color: var(--primary-color);
-  color: white;
+/* Force button to be blue with important to override any other styles */
+button,
+button[type="submit"],
+.card button {
+  background-color: #3498db !important;
+  color: white !important;
   border: none;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
-  background-color: var(--primary-dark);
+button:hover,
+button[type="submit"]:hover,
+.card button:hover {
+  background-color: #2980b9 !important;
 }
 
 .error {
@@ -222,4 +249,32 @@ button:hover {
     flex-direction: column;
     gap: 0.5rem;
   }
+}
+
+/* Add styles for highlight effect */
+.highlight-animation {
+  animation: highlight 2s ease-in-out;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: var(--background-color);
+  }
+  30% {
+    background-color: rgba(46, 204, 113, 0.2);
+  }
+  100% {
+    background-color: var(--card-bg);
+  }
+}
+
+/* Add call to action */
+.try-it-prompt {
+  background-color: #f0f7fb;
+  border-left: 5px solid var(--secondary-color);
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem 0;
+  border-radius: 0 4px 4px 0;
+  font-weight: bold;
+  color: var(--secondary-color);
 }

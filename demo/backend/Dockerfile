@@ -10,8 +10,7 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     procps \
     vim \
-    libpq-dev \
-    postgresql-client \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
@@ -32,7 +31,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     curl \
-    libpq-dev \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

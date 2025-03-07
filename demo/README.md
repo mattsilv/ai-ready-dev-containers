@@ -62,7 +62,7 @@ demo/
 
 - [Docker](https://www.docker.com/products/docker-desktop/)
 
-### Running the Demo
+### Option 1: Quick Start with start_here.sh (Recommended for beginners)
 
 The demo has a single entry point script that handles everything:
 
@@ -79,7 +79,7 @@ chmod +x start_here.sh
 
 This script will:
 
-1. Check if Docker is installed
+1. Check if Docker is running
 2. Create necessary directories
 3. Stop any existing containers
 4. Start the containers directly (so you can access the app immediately)
@@ -88,6 +88,26 @@ You can access the application directly in your browser:
 
 - Frontend: http://localhost:3001
 - API docs: http://localhost:8001/docs
+
+### Option 2: Using Dev Containers (for VS Code or JetBrains users)
+
+If you're using VS Code or JetBrains IDE with the Dev Containers extension, you can open this project in a containerized development environment:
+
+1. Install the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) for VS Code or the [JetBrains Gateway](https://www.jetbrains.com/remote-development/gateway/) for JetBrains IDEs
+
+2. Open the project in your IDE:
+
+   - VS Code: Open the project folder and click "Reopen in Container" when prompted
+   - JetBrains: Open the project through Gateway using the Dev Containers option
+
+3. The Dev Container will be built and started, providing a pre-configured development environment with all dependencies installed
+
+The Dev Container configuration in `.devcontainer/devcontainer.json` includes:
+
+- Python 3.12
+- Node.js 20
+- Docker-in-Docker for nested container operations
+- Recommended extensions and settings
 
 ## Development Workflow
 
@@ -149,7 +169,7 @@ The demo includes a simple "Hello World" application to demonstrate the full sta
 
 You can test the connectivity between all three components:
 
-1. Visit the frontend at http://localhost:3000
+1. Visit the frontend at http://localhost:3001
 2. The frontend will display items from the database, fetched through the backend API
 3. You can add new items through the UI, which will be saved to the database
 

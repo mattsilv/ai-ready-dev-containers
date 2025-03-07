@@ -7,13 +7,24 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Ensure the data directory exists
+data_dir = "/app/data"
+os.makedirs(data_dir, exist_ok=True)
+if os.path.exists(data_dir):
+    os.chmod(data_dir, 0o777)  # Ensure directory is writable
+
 class Settings(BaseSettings):
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://user:password@db:5432/demo_db")
+    # Default to SQLite, stored in a volume for persistence
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:////app/data/demo.db")
 
 settings = Settings()
 
 # Create SQLAlchemy engine
-engine = create_engine(settings.DATABASE_URL)
+# Connect with connect_args={"check_same_thread": False} for SQLite
+engine = create_engine(
+    settings.DATABASE_URL, 
+    connect_args={"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

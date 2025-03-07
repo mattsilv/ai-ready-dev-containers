@@ -1,0 +1,62 @@
+{
+  "name": "Vue-Django-PostgreSQL Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "backend",
+  "workspaceFolder": "/app",
+
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "16"
+    },
+    "docker-in-docker": {
+      "version": "latest",
+      "moby": true
+    }
+  },
+
+  "forwardPorts": [3001, 8001, 5432],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "batisteo.vscode-django",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Vue.volar",
+        "Vue.vscode-typescript-vue-plugin",
+        "cweijan.vscode-postgresql-client2",
+        "mhutchie.git-graph"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true,
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/.venv": true,
+          "**/node_modules": true,
+          "**/.git": true,
+          "**/.DS_Store": true
+        },
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "[python]": {
+          "editor.formatOnSave": true
+        },
+        "[vue]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      }
+    }
+  },
+
+  "remoteUser": "vscode",
+
+  "postCreateCommand": "echo 'Dev container is ready! Run ./start_here.sh to launch the application.'"
+}

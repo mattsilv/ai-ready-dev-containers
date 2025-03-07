@@ -1,0 +1,63 @@
+services:
+  backend:
+    build:
+      context: ../backend
+      target: development
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+    ports:
+      - "4001:4000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/app_db
+      - NODE_ENV=development
+    command: >
+      sh -c "
+        cd /app &&
+        npm run dev
+      "
+    tty: true
+    stdin_open: true
+    depends_on:
+      - mongo
+    labels:
+      - "com.app=dev-container"
+      - "com.component=backend"
+      - "com.managed-by=start-script"
+
+  frontend:
+    build:
+      context: ../frontend
+      target: development
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4001/api
+    command: npm run dev
+    depends_on:
+      - backend
+    labels:
+      - "com.app=dev-container"
+      - "com.component=frontend"
+      - "com.managed-by=start-script"
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ../backend/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      - MONGO_INITDB_DATABASE=app_db
+    labels:
+      - "com.app=dev-container"
+      - "com.component=database"
+      - "com.managed-by=start-script"
+
+volumes:
+  mongo-data:

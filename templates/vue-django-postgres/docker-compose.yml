@@ -1,0 +1,70 @@
+services:
+  backend:
+    build:
+      context: ../backend
+      target: development
+    volumes:
+      - ../backend:/app
+      - static-files:/app/static
+      - media-files:/app/media
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/app_db
+      - DEBUG=True
+    command: >
+      bash -c "
+        cd /app &&
+        pip install -r requirements.txt &&
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+    labels:
+      - "com.app=dev-container"
+      - "com.component=backend"
+      - "com.managed-by=start-script"
+
+  frontend:
+    build:
+      context: ../frontend
+      target: development
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    ports:
+      - "3001:8080"
+    environment:
+      - VUE_APP_API_URL=http://localhost:8001/api
+    command: npm run serve
+    depends_on:
+      - backend
+    labels:
+      - "com.app=dev-container"
+      - "com.component=frontend"
+      - "com.managed-by=start-script"
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=app_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ../backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    labels:
+      - "com.app=dev-container"
+      - "com.component=database"
+      - "com.managed-by=start-script"
+
+volumes:
+  postgres-data:
+  static-files:
+  media-files:

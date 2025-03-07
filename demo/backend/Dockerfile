@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Rust for pydantic-core
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 # Create a non-root user
 RUN groupadd --gid 1000 vscode \
     && useradd --uid 1000 --gid 1000 -m vscode \

@@ -1,7 +1,7 @@
 fastapi==0.103.1
 uvicorn==0.23.2
 gunicorn==21.2.0
-psycopg2-binary==2.9.9
+# SQLite is included in Python standard library, no external driver needed
 pydantic==2.4.2
 pydantic-settings==2.0.3
 python-dotenv==1.0.0

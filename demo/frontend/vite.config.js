@@ -8,6 +8,17 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 3000,
+    proxy: {
+      // Proxy API requests to the backend
+      "/health": {
+        target: "http://backend:8000",
+        changeOrigin: true,
+      },
+      "/items": {
+        target: "http://backend:8000",
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     rollupOptions: {

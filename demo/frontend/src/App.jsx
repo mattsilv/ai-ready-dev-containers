@@ -1,19 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import axios from "axios";
 
+// Configure Axios with the base URL from the environment variable
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
+axios.defaults.baseURL = API_URL;
+
 function App() {
   const [items, setItems] = useState([]);
-  const [newItem, setNewItem] = useState({ name: "", description: "" });
+
+  // Format current date and time in a friendly format
+  const now = new Date();
+  const options = {
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  };
+  const formattedDateTime = now.toLocaleDateString("en-US", options);
+
+  const [newItem, setNewItem] = useState({
+    name: "vibe coder",
+    description: `this is my first dev container on ${formattedDateTime}`,
+  });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [apiHealth, setApiHealth] = useState(null);
+  const [highlight, setHighlight] = useState(false);
+  const itemsContainerRef = useRef(null);
 
   // Check API health
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const response = await axios.get("/api/health");
+        const response = await axios.get("/health");
         setApiHealth(response.data.status);
       } catch (err) {
         setApiHealth("down");
@@ -29,8 +51,10 @@ function App() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/api/items");
-        setItems(response.data);
+        const response = await axios.get("/items");
+        // Sort items in descending order by ID (newest first)
+        const sortedItems = [...response.data].sort((a, b) => b.id - a.id);
+        setItems(sortedItems);
         setError(null);
       } catch (err) {
         setError("Error fetching items. Is the backend running?");
@@ -55,10 +79,20 @@ function App() {
     if (!newItem.name) return;
 
     try {
-      const response = await axios.post("/api/items", newItem);
-      setItems([...items, response.data]);
+      const response = await axios.post("/items", newItem);
+      // Add new item to the beginning of the array (descending order)
+      setItems([response.data, ...items]);
       setNewItem({ name: "", description: "" });
       setError(null);
+
+      // Trigger highlight effect
+      setHighlight(true);
+      setTimeout(() => setHighlight(false), 2000);
+
+      // Scroll to the items container
+      if (itemsContainerRef.current) {
+        itemsContainerRef.current.scrollIntoView({ behavior: "smooth" });
+      }
     } catch (err) {
       setError("Error creating item");
       console.error(err);
@@ -85,8 +119,7 @@ function App() {
       <p className="description">
         This simple app demonstrates a complete fullstack application running in
         a development container. It features a <strong>React</strong> frontend,{" "}
-        <strong>FastAPI</strong> backend, and <strong>PostgreSQL</strong>{" "}
-        database.
+        <strong>FastAPI</strong> backend, and <strong>SQLite</strong> database.
       </p>
 
       <div className="demo-info">
@@ -99,7 +132,7 @@ function App() {
             🐍 <strong>Backend:</strong> Python + FastAPI
           </li>
           <li>
-            🐘 <strong>Database:</strong> PostgreSQL
+            🗄️ <strong>Database:</strong> SQLite
           </li>
           <li>
             🐳 <strong>Environment:</strong> Docker + Dev Containers
@@ -111,7 +144,10 @@ function App() {
 
       <div className="card">
         <h2>Add New Item</h2>
-        <form onSubmit={handleSubmit}>
+        <div className="try-it-prompt">
+          👉 Try it now! Add an item to see it appear in the database.
+        </div>
+        <form onSubmit={handleSubmit} className="horizontal-form">
           <div className="form-group">
             <label htmlFor="name">Name:</label>
             <input
@@ -126,7 +162,8 @@ function App() {
           </div>
           <div className="form-group">
             <label htmlFor="description">Description:</label>
-            <textarea
+            <input
+              type="text"
               id="description"
               name="description"
               value={newItem.description}
@@ -138,10 +175,13 @@ function App() {
         </form>
       </div>
 
-      <div className="items-container">
+      <div
+        ref={itemsContainerRef}
+        className={`items-container ${highlight ? "highlight-animation" : ""}`}
+      >
         <h2>Database Items</h2>
         {loading ? (
-          <p>Loading items from PostgreSQL database...</p>
+          <p>Loading items from database...</p>
         ) : items.length > 0 ? (
           <ul className="items-list">
             {items.map((item) => (

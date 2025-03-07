@@ -9,5 +9,5 @@ sqlalchemy==2.0.23
 httpx==0.25.1
 pytest==7.4.3
 requests==2.31.0
-# Use a specific version of aiohttp compatible with Python 3.13
+# Use a specific version of aiohttp compatible with Python 3.11
 aiohttp==3.9.1

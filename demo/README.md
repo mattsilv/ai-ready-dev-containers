@@ -53,7 +53,7 @@ demo/
 │       ├── App.css             # Component styling
 │       ├── main.jsx            # React application entry point
 │       └── index.css           # Global styles
-└── START_HERE.sh               # Single entry point script to run the demo
+└── start_here.sh               # Single entry point script to run the demo
 ```
 
 ## Getting Started

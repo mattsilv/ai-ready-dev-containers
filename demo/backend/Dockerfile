@@ -1,4 +1,4 @@
-FROM python:3.13.2-slim-bookworm as development
+FROM python:3.11-slim-bookworm as development
 
 WORKDIR /app
 
@@ -14,10 +14,6 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Rust for pydantic-core
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-
 # Create a non-root user
 RUN groupadd --gid 1000 vscode \
     && useradd --uid 1000 --gid 1000 -m vscode \
@@ -31,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Development stage doesn't need CMD as it's specified in docker-compose.yml
 
-FROM python:3.13.2-slim-bookworm as production
+FROM python:3.11-slim-bookworm as production
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
